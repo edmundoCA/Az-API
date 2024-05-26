@@ -1,16 +1,17 @@
 # Variables de configuración
-$organizationUrl = "https://dev.azure.com/$ORG"
-$projectName = $PROJECT
+$organization = $ORG
+$project = $PROJECT
 $personalAccessToken = $PAT
 
 # Definir la URL de la API para crear un bug
-$apiUrl = "$organizationUrl/$projectName/_apis/wit/workitems/\`$Bug?api-version=6.0"
+$apiUrl = "https://dev.azure.com/$organization/$project/_apis/wit/workitems/`$Bug?api-version=6.0"
 
 # Crear el cuerpo de la solicitud para crear el bug
 $body = @{
-    "op" = "add"
-    "path" = "/fields/System.Title"
-    "value" = "Bug creado desde PowerShell"
+    "op" = "add";
+    "path" = "/fields/System.Title";
+    "from" = "null";
+    "value" = "Bug creado desde PowerShell";
 } | ConvertTo-Json
 
 # Configurar la autenticación con el token personal
@@ -21,7 +22,7 @@ $headers = @{
 }
 
 # Enviar la solicitud HTTP para crear el bug
-$response = Invoke-RestMethod -Uri $apiUrl -Method Patch -Headers $headers -Body $body
+$response = Invoke-RestMethod -Uri $apiUrl -Method Post -Headers $headers -Body $body
 
 # Verificar la respuesta
 if ($response.id) {
