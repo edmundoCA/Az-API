@@ -16,13 +16,11 @@ $body = @{
 
 # Configurar la autenticación con el token personal
 $token = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(":$personalAccessToken"))
-$headers = @{
-    "Authorization" = "Basic $token"
-    "Content-Type" = "application/json-patch+json"
-}
+$headers = @{ authorization = "Basic $token" }
 
 # Enviar la solicitud HTTP para crear el bug
-$response = Invoke-RestMethod -Uri $apiUrl -Method Post -Headers $headers -Body $body
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$response = Invoke-RestMethod $apiUrl -Method Post -ContentType "application/json-patch+json" -Headers $headers -Body $body
 
 # Verificar la respuesta
 if ($response.id) {
